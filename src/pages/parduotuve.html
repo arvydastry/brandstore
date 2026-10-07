@@ -1,0 +1,104 @@
+<!-- @page title="Išpardavimas | Brandstore.lt" description="Originalūs drabužiai, avalynė ir aksesuarai su nuolaidomis. Filtruokite pagal dydį, prekės ženklą, kategoriją, spalvą ir kainą." body="page-plp" header="solid" css="plp" js="plp" nav="ispardavimas" mobilebar="on" preload="assets/media/sale-bg.jpg" og_image="assets/media/sale-bg.jpg" -->
+<section class="plp-head theme-deep" data-parallax-frame aria-labelledby="plp-title">
+  <div class="plp-head__media" aria-hidden="true">
+    <img src="assets/media/sale-bg.jpg" alt="" width="2200" height="1467" fetchpriority="high" decoding="async" data-parallax="0.2">
+  </div>
+  <div class="container plp-head__inner">
+    <nav class="breadcrumbs" aria-label="Naršymo kelias"><ol><li><a href="index.html">Pradžia</a></li><li><span aria-current="page">Išpardavimas</span></li></ol></nav>
+    <div class="plp-head__text">
+      <h1 class="h1 plp-head__title" id="plp-title" data-split>Išpardavimas</h1>
+      <p class="plp-head__lead" data-reveal data-reveal-delay="250">Originalūs prekių ženklai iki <span class="text-sale" data-plp-max>−80 %</span></p>
+    </div>
+  </div>
+</section>
+
+<div class="plp-quick">
+  <div class="container plp-quick__inner">
+    <div class="plp-gender" data-tabs id="plp-gender">
+      <div class="seg" role="tablist" aria-label="Lytis">
+        <button class="seg__btn" role="tab" type="button" aria-selected="true" data-value="">Visi</button>
+        <button class="seg__btn" role="tab" type="button" aria-selected="false" data-value="moterims">Moterims</button>
+        <button class="seg__btn" role="tab" type="button" aria-selected="false" data-value="vyrams">Vyrams</button>
+        <button class="seg__btn" role="tab" type="button" aria-selected="false" data-value="vaikams">Vaikams</button>
+        <span class="seg__ink" aria-hidden="true"></span>
+      </div>
+    </div>
+    <div class="plp-cats" role="group" aria-label="Kategorijos">
+      <ul class="chips plp-cats__list" role="list" id="plp-cats"></ul>
+    </div>
+  </div>
+</div>
+
+<section class="plp" aria-labelledby="plp-results-title">
+  <div class="container plp__layout">
+    <aside class="plp-side" aria-labelledby="plp-side-title">
+      <a class="skip-link" href="#plp-results-title" data-plp-skip>Pereiti prie prekių</a>
+      <div class="plp-side__inner" data-lenis-prevent>
+        <div class="plp-side__head">
+          <h2 class="plp-side__title" id="plp-side-title">Filtrai</h2>
+          <button class="plp-side__clear" type="button" data-plp-clear hidden>Išvalyti visus</button>
+        </div>
+        <div class="plp-side__mount" data-plp-side-mount>
+          <div class="plp-filters" id="plp-filters"></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="plp-main" id="plp-results">
+      <div class="plp-bar">
+        <button class="plp-bar__filters" type="button" data-plp-open-filters aria-controls="plp-sheet" aria-haspopup="dialog">
+          <svg class="i" aria-hidden="true" focusable="false"><use href="#i-sliders-horizontal"></use></svg>
+          <span class="plp-bar__ftext"><span class="plp-bar__ftitle">Filtrai<span class="plp-badge" data-plp-fcount hidden></span></span><span class="plp-bar__fsub" data-plp-count-short aria-hidden="true"></span></span>
+        </button>
+        <p class="plp-count plp-count--bar" data-plp-count></p>
+        <div class="plp-sort">
+          <label class="plp-sort__label" for="plp-sort">Rikiuoti</label>
+          <span class="plp-sort__m" aria-hidden="true"><span class="plp-sort__m-title">Rikiuoti</span><span class="plp-sort__cur" data-plp-sort-cur></span></span>
+          <div class="select select--plain plp-sort__select">
+            <select id="plp-sort">
+              <option value="nuolaida">Didžiausia nuolaida</option>
+              <option value="rekomenduojami">Rekomenduojami</option>
+              <option value="naujausi">Naujausi</option>
+              <option value="kaina-nuo-maziausios">Kaina: nuo mažiausios</option>
+              <option value="kaina-nuo-didziausios">Kaina: nuo didžiausios</option>
+            </select>
+            <svg class="i" aria-hidden="true" focusable="false"><use href="#i-caret-down"></use></svg>
+          </div>
+        </div>
+        <div class="plp-density" role="group" aria-label="Prekių tankis">
+          <button class="plp-density__btn" type="button" data-density="2" aria-pressed="false" aria-label="Po 2 prekes eilutėje"><span class="plp-density__glyph" aria-hidden="true"><i></i><i></i></span></button>
+          <button class="plp-density__btn" type="button" data-density="3" aria-pressed="false" aria-label="Po 3 prekes eilutėje"><span class="plp-density__glyph" aria-hidden="true"><i></i><i></i><i></i></span></button>
+          <button class="plp-density__btn" type="button" data-density="4" aria-pressed="false" aria-label="Po 4 prekes eilutėje"><span class="plp-density__glyph" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+        </div>
+      </div>
+
+      <div class="plp-active" data-plp-active hidden>
+        <ul class="chips plp-active__list" role="list" aria-label="Pritaikyti filtrai" data-plp-active-list></ul>
+        <button class="plp-active__clear" type="button" data-plp-clear>Išvalyti visus</button>
+      </div>
+
+      <h2 class="sr-only" id="plp-results-title" tabindex="-1">Išpardavimo prekės</h2>
+      <ul class="product-grid plp-grid" id="plp-grid" data-reveal-stagger></ul>
+      <noscript><p class="plp-noscript">Įjunkite JavaScript, kad matytumėte išpardavimo prekes ir filtrus.</p></noscript>
+      <div class="plp-empty" data-plp-empty hidden></div>
+
+      <div class="plp-more" data-plp-more hidden>
+        <p class="plp-more__text" data-plp-more-text></p>
+        <div class="plp-more__bar" aria-hidden="true"><span data-plp-more-bar></span></div>
+        <button class="btn btn--ghost plp-more__btn" type="button" data-plp-more-btn>Rodyti daugiau</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<dialog class="modal modal--sheet plp-sheet" id="plp-sheet" aria-labelledby="plp-sheet-title" data-lenis-prevent>
+  <div class="modal__head">
+    <h2 class="modal__title" id="plp-sheet-title" tabindex="-1" autofocus>Filtrai</h2>
+    <button class="icon-btn" type="button" data-dialog-close><svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-x"></use></svg><span class="sr-only">Uždaryti filtrus</span></button>
+  </div>
+  <div class="modal__body plp-sheet__body" data-plp-sheet-mount></div>
+  <div class="plp-sheet__foot">
+    <button class="btn btn--link plp-sheet__clear" type="button" data-plp-clear>Išvalyti visus</button>
+    <button class="btn plp-sheet__apply" type="button" data-plp-apply>Rodyti prekes</button>
+  </div>
+</dialog>

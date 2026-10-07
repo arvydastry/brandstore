@@ -1,0 +1,579 @@
+/* ==========================================================================
+   Brandstore "Galleria": product pages (preke-*.html). Loaded after base.css.
+   Markup: src/generators/pdp.py · behaviour: assets/js/pdp.js
+   Sections: 1 page vars · 2 top line · 3 grid + smart sticky · 4 gallery · 5 info
+   6 options/sizes/notify · 7 buy/facts/trust · 8 accordions · 9 cross-sell rows
+   10 lightbox · 11 sticky buy bar · 12 size guide · 13 no-js / reduced motion
+   ========================================================================== */
+
+/* 1. PAGE VARS ============================================================= */
+.page-pdp {
+  --pdp-bar-h: 72px;          /* desktop top bar */
+  --pdp-bar-h-m: 72px;        /* phone/tablet bottom bar (without the safe area) */
+  --pdp-top: calc(var(--hdr-offset) + var(--pdp-bar-offset, 0px) + 24px);
+  /* breadcrumb row height (min-height 44px + vertical padding), used to fit the first gallery image in the first screen */
+  --pdp-topline-h: calc(44px + 2 * clamp(10px, 1.4vw, 20px));
+}
+html.pdp-bar-top { --pdp-bar-offset: var(--pdp-bar-h, 72px); }
+
+/* 2. TOP LINE (breadcrumbs + back link) ===================================== */
+.pdp-main { padding-bottom: 0; }
+.pdp-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 24px;
+  min-height: 44px;
+  padding-block: clamp(10px, 1.4vw, 20px) clamp(10px, 1.4vw, 20px);
+}
+.pdp-back { gap: 8px; color: var(--fg-2); }
+.pdp-back::before { display: none; }
+@media (hover: hover) { .pdp-back:hover { color: var(--fg); } }
+@media (max-width: 767.98px) {
+  .pdp-crumbs li:last-child { display: none; }
+  .pdp-topline { padding-block: 6px 10px; }
+}
+
+/* 3. GRID + SMART STICKY ==================================================== */
+.pdp-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (min-width: 768px) {
+  .pdp-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 40px clamp(28px, 4vw, 72px); }
+  /* Both columns are sticky. The taller one fills the row, so only the shorter one actually pins.
+     pdp.js writes --pdp-col-h; a column taller than the viewport pins by its bottom edge instead. */
+  .pdp-grid > [data-pdp-col] {
+    position: sticky;
+    top: min(var(--pdp-top), calc(100svh - var(--pdp-col-h, 0px) - 24px));
+    transition: top var(--dur-ui) var(--ease-out);
+  }
+}
+@media (min-width: 1024px) {
+  .pdp-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+
+/* 4. GALLERY =============================================================== */
+.pdp-gallery { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.pdp-img.is-packshot { mix-blend-mode: multiply; }
+
+.pdp-gallery__thumbs { display: none; }
+@media (min-width: 1024px) {
+  .pdp-gallery { grid-template-columns: 72px minmax(0, 1fr); }
+  .pdp-gallery__thumbs { display: flex; flex-direction: column; gap: 10px; }
+}
+.pdp-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: var(--c-media);
+  isolation: isolate;
+  opacity: .62;
+  transition: opacity var(--dur-hover) ease;
+}
+.pdp-thumb img { width: 100%; height: 100%; object-fit: cover; transition: scale var(--dur-reveal) var(--ease-out); }
+.pdp-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  box-shadow: inset 0 0 0 1px transparent;
+  transition: box-shadow var(--dur-hover) ease;
+  pointer-events: none;
+}
+.pdp-thumb[aria-current="true"] { opacity: 1; }
+.pdp-thumb[aria-current="true"]::after { box-shadow: inset 0 0 0 1px var(--c-ink); }
+.pdp-thumb:focus-visible { outline-offset: 2px; opacity: 1; }
+@media (hover: hover) {
+  .pdp-thumb:hover { opacity: 1; }
+  .pdp-thumb:hover img { scale: 1.06; }
+}
+
+.pdp-gallery__stage {
+  position: relative;
+  width: 100%; /* definite width: max-height clamps the height only, the stage keeps filling its column */
+  aspect-ratio: 4 / 5;
+  max-height: calc(100svh - var(--announce-h) - var(--hdr-h) - var(--pdp-topline-h) - 20px);
+  min-height: 320px;
+  overflow: hidden;
+  background: var(--c-media);
+  isolation: isolate;
+}
+@media (max-width: 1023.98px) { .pdp-gallery__stage { max-height: 70svh; } }
+@media (max-width: 767.98px) {
+  /* ~48svh keeps brand, title and price in the first screen above the sticky buy bar (ux-audit 3.6.7) */
+  .pdp-gallery { margin-inline: calc(-1 * var(--gutter)); }
+  .pdp-gallery__stage { max-height: 48svh; min-height: 300px; }
+  .pdp-grid { gap: 20px; }
+  .pdp-price { margin-top: 14px; }
+}
+
+.pdp-gallery__track {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.pdp-gallery__track::-webkit-scrollbar { display: none; }
+.pdp-slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--c-media);
+  isolation: isolate;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.pdp-slide__zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+.pdp-slide__zoom:focus-visible { outline-offset: -6px; }
+.pdp-slide .pdp-img { width: 100%; height: 100%; object-fit: contain; transition: scale 700ms var(--ease-out); }
+.pdp-slide .pdp-img.is-photo { object-fit: cover; }
+/* footwear packshots: wide subject with deep white margins top and bottom; scale past them, keep air at the sides */
+.pdp-slide .pdp-img.is-wide { scale: var(--pdp-wide-scale, 1.18); }
+@media (max-width: 767.98px) { .pdp-gallery { --pdp-wide-scale: 1.3; } }
+/* zoom factor = natural / drawn size, capped (pdp.js writes --pdp-zoom); the fallbacks match the demo caps */
+.pdp-slide.is-zoomed .pdp-img { scale: var(--pdp-zoom, 1.4); }
+.pdp-slide.is-zoomed .pdp-img.is-wide { scale: var(--pdp-zoom, 1.6); }
+
+.pdp-gallery__badges { position: absolute; top: 16px; left: 16px; z-index: 2; pointer-events: none; }
+.pdp-gallery__ui { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.pdp-gallery__ui > * { pointer-events: auto; }
+.pdp-gallery__count {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  font: 500 .71875rem/1 var(--f-sans);
+  letter-spacing: .16em;
+  color: var(--c-text-2);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.pdp-gallery__nav { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 8px; }
+.pdp-gallery__expand { position: absolute; top: 12px; right: 12px; }
+.pdp-gallery__ui .icon-btn:disabled { opacity: 0; pointer-events: none; }
+@media (hover: hover) and (pointer: fine) {
+  .pdp-gallery__nav, .pdp-gallery__expand { opacity: 0; translate: 0 6px; transition: opacity 300ms ease, translate var(--dur-ui) var(--ease-out); }
+  .pdp-gallery__stage:hover .pdp-gallery__nav, .pdp-gallery__stage:hover .pdp-gallery__expand,
+  .pdp-gallery__stage:focus-within .pdp-gallery__nav, .pdp-gallery__stage:focus-within .pdp-gallery__expand { opacity: 1; translate: 0 0; }
+}
+@media (hover: none), (pointer: coarse) { .pdp-gallery__nav { display: none; } }
+
+/* progress dashes (phones/tablets and lightbox): square, decorative; the slides carry the labels */
+.pdp-dots { position: absolute; left: 50%; bottom: 18px; display: flex; gap: 6px; translate: -50% 0; pointer-events: none; }
+.pdp-dot { width: 20px; height: 2px; background: rgb(18 19 21 / .18); transition: background-color var(--dur-ui) ease; }
+.pdp-dot.is-active { background: var(--c-ink); }
+@media (min-width: 1024px) { .pdp-gallery .pdp-dots { display: none; } }
+@media (max-width: 1023.98px) { .pdp-gallery__count { display: none; } }
+
+/* 5. INFO ================================================================== */
+.pdp-info__inner { max-width: 540px; }
+@media (min-width: 1280px) { .pdp-info__inner { padding-right: clamp(0px, 2vw, 32px); } }
+.pdp-head__brand a {
+  display: inline-block;
+  padding-block: 10px 6px;
+  margin-block: -6px -2px;
+  font: 600 .75rem/1.3 var(--f-sans);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--fg);
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 300ms var(--ease-out);
+}
+.pdp-head__brand a:hover, .pdp-head__brand a:focus-visible { background-size: 100% 1px; }
+.pdp-title {
+  margin-top: 8px;
+  font: 500 clamp(1.75rem, 1.35rem + 1vw, 2.375rem)/1.12 var(--f-display);
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+  padding-bottom: .04em;
+}
+.pdp-price { display: grid; gap: 6px; margin-top: 20px; }
+.pdp-price .price { align-items: center; }
+.pdp-price .price .badge { align-self: center; }
+.pdp-price .savings { font-size: .875rem; }
+.pdp-price__legal { font-size: .78125rem; line-height: 1.5; color: var(--fg-3); }
+
+/* 6. OPTIONS, SIZES, NOTIFY ================================================ */
+.pdp-opts { display: grid; gap: 24px; margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line); }
+.pdp-opt__row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+.pdp-opt__label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-height: 24px; font-size: .875rem; }
+.pdp-opt__row .pdp-opt__label { min-height: 44px; }
+.pdp-opt__key { font: 500 .75rem/1.3 var(--f-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--fg-2); }
+.pdp-opt__val { display: inline-flex; align-items: center; gap: 10px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.pdp-opt__val:empty { display: none; }
+.pdp-swatch { display: inline-block; width: 16px; height: 16px; background: var(--swatch); box-shadow: inset 0 0 0 1px rgb(18 19 21 / .16); }
+/* other colours of the same model (same SKU stem): small packshot tiles, the current one outlined */
+.pdp-colors { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.pdp-colors__note { margin-top: 10px; font-size: .8125rem; color: var(--fg-2); }
+.pdp-color {
+  position: relative;
+  display: block;
+  width: 52px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: var(--c-media);
+  isolation: isolate;
+}
+.pdp-color img { width: 100%; height: 100%; object-fit: cover; transition: scale var(--dur-ui) var(--ease-out); }
+.pdp-color::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow var(--dur-hover) ease;
+  pointer-events: none;
+}
+.pdp-color.is-current::after { box-shadow: inset 0 0 0 1px var(--c-ink), inset 0 0 0 3px var(--c-surface); }
+a.pdp-color { cursor: pointer; }
+a.pdp-color:focus-visible { outline-offset: 2px; }
+@media (hover: hover) {
+  a.pdp-color:hover::after { box-shadow: inset 0 0 0 1px var(--c-text-3); }
+  a.pdp-color:hover img { scale: 1.06; }
+}
+
+.pdp-guide-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fg);
+  font-size: .8125rem;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  white-space: nowrap;
+}
+.pdp-guide-link:hover { text-decoration-thickness: 2px; }
+/* equal columns at every width: one row up to 6 sizes (--size-cols from the generator), auto-fill otherwise,
+   so a lone size never wraps onto its own row */
+.pdp-sizes { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+.pdp-sizes[style*="--size-cols"] { grid-template-columns: repeat(var(--size-cols), minmax(0, 1fr)); }
+.pdp-sizes .size-chip { min-width: 0; height: 48px; padding-inline: 4px; font-size: .875rem; }
+.pdp-sizes .size-chip.is-unavailable { cursor: pointer; }
+@media (max-width: 479.98px) { .pdp-sizes { gap: 6px; } }
+@media (hover: hover) { .pdp-sizes .size-chip.is-unavailable:hover { border-color: var(--c-text-3); } }
+.pdp-opt .field__error { margin-top: 12px; }
+.pdp-opt__note { margin-top: 12px; font-size: .8125rem; line-height: 1.55; color: var(--fg-2); }
+.pdp-textbtn {
+  padding: 10px 0;
+  margin: -10px 0;
+  border: 0;
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.pdp-textbtn:hover { text-decoration-thickness: 2px; }
+.pdp-notify { margin-top: 14px; padding: 20px; border: 1px solid var(--line); background: var(--c-surface); }
+.pdp-notify__text { margin-bottom: 14px; font-size: .875rem; color: var(--fg-2); }
+.pdp-notify__text strong, .pdp-notify .field__success strong { color: var(--fg); }
+.pdp-notify .field__success { font-size: .875rem; outline: none; }
+.pdp-notify .field__error { margin-top: 10px; }
+.pdp-notify__hint { margin-top: 10px; line-height: 1.5; }
+.pdp-notify__hint a { color: var(--fg-2); text-decoration: underline; text-underline-offset: 3px; }
+.pdp-notify__hint a:hover { color: var(--fg); }
+
+/* 7. BUY, FACTS, TRUST ===================================================== */
+.pdp-buy { display: grid; gap: 14px; margin-top: 26px; }
+.pdp-actions { display: grid; grid-template-columns: minmax(0, 1fr) 60px; gap: 8px; }
+.pdp-add { min-height: 60px; }
+.pdp-wish {
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--c-ink);
+  border-radius: 0; /* DESIGN-SPEC 7: square wishlist button next to "Į krepšelį" */
+}
+@media (hover: hover) { .pdp-wish:hover { background: var(--c-ink); color: var(--c-on-dark); } }
+.pdp-wish[aria-pressed="true"] { color: var(--c-ink); }
+@media (hover: hover) { .pdp-wish[aria-pressed="true"]:hover { color: var(--c-on-dark); } }
+
+.pdp-facts { display: grid; gap: 14px; margin: 24px 0 0; padding: 0; list-style: none; }
+.pdp-fact { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 14px; align-items: start; font-size: .875rem; line-height: 1.45; }
+.pdp-fact > .i { margin-top: 0; color: var(--fg); }
+.pdp-fact__title strong { font-weight: 600; white-space: nowrap; }
+.pdp-fact__text { margin-top: 2px; font-size: .8125rem; color: var(--fg-2); }
+.pdp-fact.is-free .pdp-fact__title, .pdp-fact.is-free > .i { color: var(--c-ok); }
+
+.pdp-trust {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  border-block: 1px solid var(--line);
+}
+.pdp-trust li {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 10px;
+  padding: 18px 12px 18px 0;
+  font-size: .78125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--fg);
+}
+.pdp-trust li + li { padding-left: 16px; border-left: 1px solid var(--line); }
+.pdp-trust .i { color: var(--fg); }
+.pdp-pay { margin-top: 20px; }
+@media (max-width: 479.98px) {
+  /* trust facts as stacked icon + label rows instead of three cramped columns */
+  .pdp-trust { grid-template-columns: minmax(0, 1fr); }
+  .pdp-trust li { grid-template-columns: 24px minmax(0, 1fr); align-items: center; gap: 14px; padding: 12px 0; font-size: .8125rem; }
+  .pdp-trust li + li { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+  /* five payment marks on one row at 360px and up */
+  .pdp-pay { gap: 6px; flex-wrap: nowrap; }
+  .pdp-pay .pay-mark { height: 32px; min-width: 0; flex: 1 1 auto; padding: 0 6px; }
+  .pdp-pay .pay-mark__svg { width: 24px; height: 24px; }
+  .pdp-pay .pay-mark--text { flex: 2 1 auto; font-size: .59375rem; letter-spacing: .06em; white-space: nowrap; }
+}
+.pdp-sku { margin-top: 16px; font-size: .75rem; color: var(--fg-3); letter-spacing: .02em; }
+.pdp-sku span { color: var(--fg-2); font-variant-numeric: tabular-nums; }
+
+/* 8. ACCORDIONS ============================================================ */
+.pdp-accs { margin-top: 32px; border-top: 1px solid var(--line); }
+.pdp-accs .acc__body { font-size: .9375rem; line-height: 1.65; }
+.pdp-specs { display: grid; gap: 8px; margin: 0 0 18px; font-size: .875rem; }
+.pdp-specs > div { display: grid; grid-template-columns: minmax(110px, 34%) minmax(0, 1fr); gap: 16px; }
+.pdp-specs dt { color: var(--fg-3); }
+.pdp-specs dd { margin: 0; color: var(--fg); }
+
+/* 9. CROSS-SELL ROWS ======================================================= */
+.pdp-section + .pdp-section { padding-top: 0; }
+.pdp-section > .container > .section-head { padding-top: clamp(28px, 3vw, 44px); border-top: 1px solid var(--line); }
+.pdp-h2 { font-size: clamp(1.875rem, 1.35rem + 1.6vw, 2.75rem); }
+.product-grid.pdp-look__grid { --cols: 2; }
+@media (min-width: 768px) { .product-grid.pdp-look__grid { --cols: 4; --gap-x: 20px; } }
+@media (min-width: 1280px) { .product-grid.pdp-look__grid { --gap-x: 24px; } }
+
+/* brand strip: giant outlined Bodoni name drifting with scroll, intro left, carousel right */
+.pdp-brand { position: relative; overflow: clip; padding-top: clamp(32px, 4vw, 64px); }
+.pdp-brand h2 em { display: block; padding-bottom: .06em; }
+.pdp-brand__word {
+  margin: 0 0 clamp(16px, 2.4vw, 40px);
+  font: 400 clamp(4.5rem, 1.5rem + 12vw, 14rem)/.92 var(--f-display);
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  text-align: center;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--c-line-strong);
+  pointer-events: none;
+  user-select: none;
+}
+.pdp-brand__word span { display: inline-block; }
+.pdp-brand__grid { position: relative; display: grid; gap: 36px; }
+@media (min-width: 1024px) {
+  .pdp-brand__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(40px, 5vw, 96px); align-items: center; }
+}
+.pdp-brand__intro { display: grid; justify-items: start; align-content: start; gap: 22px; padding-top: 8px; }
+.pdp-brand__count { display: flex; align-items: baseline; gap: 12px; color: var(--fg-2); font-size: .9375rem; }
+.pdp-brand__fact { max-width: 32ch; font-size: .8125rem; line-height: 1.5; color: var(--fg-3); }
+.pdp-brand__num { font: 500 clamp(2.5rem, 1.9rem + 1.8vw, 3.75rem)/1 var(--f-display); color: var(--fg); font-variant-numeric: lining-nums; }
+.pdp-brand .carousel { --per: 2.15; }
+@media (min-width: 768px) { .pdp-brand .carousel { --per: 3.2; } }
+@media (min-width: 1024px) { .pdp-brand .carousel { --per: 3.1; --gap: 20px; } }
+/* 1-2 items: a plain grid that fills its column (no carousel footer, no empty right zone) */
+@media (min-width: 1024px) {
+  .pdp-brand__grid.is-few { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+}
+.pdp-brand__grid.is-few .carousel { --per: 2; }
+.pdp-brand__grid.is-few .carousel__footer { display: none; }
+.pdp-brand .carousel__footer { margin-top: 20px; }
+
+.pdp-recent .carousel { --per: 2.5; --gap: 12px; }
+@media (min-width: 768px) { .pdp-recent .carousel { --per: 4.3; --gap: 16px; } }
+@media (min-width: 1280px) { .pdp-recent .carousel { --per: 6.2; --gap: 20px; } }
+
+/* 10. LIGHTBOX ============================================================= */
+.pdp-lightbox {
+  position: fixed;
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--c-media);
+  color: var(--c-ink);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 360ms ease;
+}
+.pdp-lightbox[open] { display: block; }
+.pdp-lightbox.is-open { opacity: 1; }
+.pdp-lightbox::backdrop { background: var(--c-media); }
+.pdp-lightbox__track {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.pdp-lightbox__track::-webkit-scrollbar { display: none; }
+.pdp-lightbox__slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  margin: 0;
+  padding: 72px clamp(12px, 8vw, 140px) 56px;
+  overflow: hidden;
+  background: var(--c-media);
+  isolation: isolate;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.pdp-lightbox__slide img { width: 100%; height: 100%; object-fit: contain; transition: scale 600ms var(--ease-out); }
+.pdp-lightbox__slide img.is-photo { object-fit: contain; }
+@media (hover: hover) and (pointer: fine) {
+  .pdp-lightbox__slide img { cursor: zoom-in; }
+  .pdp-lightbox__slide.is-zoomed img { scale: var(--pdp-lb-zoom, 1.5); cursor: zoom-out; }
+}
+.pdp-lightbox__top {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 12px 12px var(--gutter);
+  pointer-events: none;
+}
+.pdp-lightbox__top > * { pointer-events: auto; }
+.pdp-lightbox__count { font: 500 .78125rem/1 var(--f-sans); letter-spacing: .16em; font-variant-numeric: tabular-nums; color: var(--c-text-2); }
+.pdp-lightbox__hint { display: none; align-items: center; gap: 8px; font-size: .78125rem; color: var(--c-text-3); }
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) { .pdp-lightbox__hint { display: inline-flex; } }
+.pdp-lightbox__hint { transition: opacity var(--dur-hover) ease; }
+.pdp-lightbox:has(.is-zoomed) .pdp-lightbox__hint { opacity: 0; }
+.pdp-lightbox__nav { position: absolute; top: 50%; z-index: 2; translate: 0 -50%; }
+.pdp-lightbox__nav--prev { left: clamp(12px, 2.4vw, 40px); }
+.pdp-lightbox__nav--next { right: clamp(12px, 2.4vw, 40px); }
+.pdp-lightbox__nav:disabled { opacity: 0; pointer-events: none; }
+@media (hover: none), (pointer: coarse) { .pdp-lightbox__nav { display: none; } }
+.pdp-lightbox__dots { bottom: calc(24px + env(safe-area-inset-bottom)); }
+
+/* 11. STICKY BUY BAR ======================================================= */
+.pdp-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-header) + 1);
+  background: rgb(251 251 250 / .96);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  visibility: hidden;
+  transition: translate var(--dur-ui) var(--ease-out), visibility 0s linear var(--dur-ui);
+}
+.pdp-bar.is-visible { visibility: visible; translate: 0 0; transition: translate var(--dur-ui) var(--ease-out), visibility 0s; }
+.pdp-bar__inner { display: flex; align-items: center; gap: 12px; height: 100%; }
+.pdp-bar__product { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
+.pdp-bar__thumb { position: relative; flex: none; width: 36px; aspect-ratio: 2 / 3; overflow: hidden; background: var(--c-media); isolation: isolate; }
+.pdp-bar__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.pdp-bar__text { display: grid; gap: 2px; min-width: 0; }
+.pdp-bar__brand { font: 600 .6875rem/1.3 var(--f-sans); letter-spacing: .14em; text-transform: uppercase; }
+.pdp-bar__title { overflow: hidden; font-size: .875rem; color: var(--fg-2); white-space: nowrap; text-overflow: ellipsis; }
+.pdp-bar__price .price { flex-wrap: nowrap; }
+.pdp-bar__select select { min-width: 196px; min-height: 52px; }
+.pdp-bar__select.is-error select { border-color: var(--c-ink); box-shadow: inset 3px 0 0 var(--c-ink); }
+/* inline "Pasirinkite dydį" attached to the select (ink, like the main size error) */
+.pdp-bar__error {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 2;
+  padding: 9px 12px;
+  border: 1px solid var(--c-ink);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-pop);
+  white-space: nowrap;
+}
+.pdp-bar__error[hidden] { display: none; }
+.pdp-bar__one { font-size: .8125rem; color: var(--fg-2); white-space: nowrap; }
+.pdp-bar__add { flex: none; min-width: 200px; }
+
+@media (min-width: 1024px) {
+  /* below the header in the stack: when the header is expanded the bar sits right under it (top = live header
+     height), when the header steps aside it takes the top; hidden, it tucks away behind the header */
+  .pdp-bar {
+    top: var(--hdr-offset);
+    z-index: calc(var(--z-header) - 1);
+    height: var(--pdp-bar-h);
+    border-bottom: 1px solid var(--c-line);
+    translate: 0 calc(-100% - var(--hdr-offset));
+    transition: translate var(--dur-ui) var(--ease-out), top .45s var(--ease-out), visibility 0s linear var(--dur-ui);
+  }
+  .pdp-bar.is-visible { translate: 0 0; transition: translate var(--dur-ui) var(--ease-out), top .45s var(--ease-out), visibility 0s; }
+  /* while the header is stepped aside, sit above its leftovers (the 1px glass edge at the top of the viewport) */
+  html.pdp-bar-top:has(.site-header.is-hidden) .pdp-bar { z-index: calc(var(--z-header) + 1); }
+  .pdp-bar__inner { gap: 20px; }
+}
+@media (max-width: 1023.98px) {
+  .pdp-bar {
+    bottom: 0;
+    z-index: var(--z-mobilebar);
+    padding-bottom: env(safe-area-inset-bottom);
+    border-top: 1px solid var(--c-line);
+    translate: 0 105%;
+  }
+  .pdp-bar__inner { min-height: var(--pdp-bar-h-m); padding-block: 10px; gap: 10px; }
+  .pdp-bar__product { display: none; }
+  .pdp-bar__price { flex: none; }
+  .pdp-bar__price .price { flex-direction: column; align-items: flex-start; gap: 0; font-size: 1.0625rem; line-height: 1.2; }
+  .pdp-bar__price .price__old { font-size: .75rem; }
+  .pdp-bar__select { flex: 1; min-width: 0; }
+  .pdp-bar__select select { width: 100%; min-width: 0; min-height: 48px; font-size: 16px; } /* 16px: no iOS zoom on focus */
+  .pdp-bar__one { flex: 1; }
+  .pdp-bar__add { min-width: 0; min-height: 48px; padding-inline: 18px; }
+  .pdp-bar__error { top: auto; bottom: calc(100% + 8px); }
+  /* the bar replaces the mobile bottom nav: keep the footer and toasts clear of it (mirrors core's mobile-bar rules) */
+  body.page-pdp .site-footer { padding-bottom: calc(var(--pdp-bar-h-m) + env(safe-area-inset-bottom)); }
+  html.pdp-bar-bottom .toast-region { bottom: calc(var(--pdp-bar-h-m) + 14px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 479.98px) {
+  .pdp-bar__add { flex: 1.15; white-space: nowrap; }
+}
+
+/* 12. SIZE GUIDE (rendered into core's #size-guide dialog) ================== */
+.pdp-guide { display: grid; gap: 20px; }
+.pdp-guide__meta { font: 500 .75rem/1.3 var(--f-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--c-text-2); }
+.pdp-guide__scroll { overflow-x: auto; margin-inline: -4px; padding-inline: 4px; }
+.pdp-guide__table { min-width: 460px; }
+.pdp-guide__table th[scope="row"] { font: 600 .875rem/1.2 var(--f-sans); letter-spacing: 0; text-transform: none; color: var(--c-ink); white-space: nowrap; }
+.pdp-guide__table tr.is-selected { background: var(--c-bg); }
+.pdp-guide__table tr.is-selected th[scope="row"] { box-shadow: inset 2px 0 0 var(--c-ink); }
+.pdp-guide__na { margin-left: 6px; font-size: .6875rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--c-text-3); }
+.pdp-guide__note { font-size: .8125rem; color: var(--c-text-3); }
+.pdp-guide__title { font: 500 1rem/1.3 var(--f-sans); }
+.pdp-guide__how ul { margin: 8px 0 0; padding-left: 1.1em; font-size: .875rem; color: var(--c-text-2); }
+.pdp-guide__how li + li { margin-top: 4px; }
+.pdp-guide__help { padding-top: 16px; border-top: 1px solid var(--c-line); font-size: .875rem; color: var(--c-text-2); }
+.pdp-guide__help a { color: var(--c-ink); text-decoration: underline; text-underline-offset: 3px; }
+
+/* 13. NO-JS / REDUCED MOTION ================================================ */
+html.no-js [data-pdp-js-only], html.no-js .pdp-gallery__ui { display: none !important; }
+html:not(.motion-ok) .pdp-brand__word span { translate: none !important; }

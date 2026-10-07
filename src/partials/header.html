@@ -1,0 +1,57 @@
+<header class="site-header {{ header_class }}" data-header data-header-mode="{{ header_mode }}">
+  <div class="site-header__bg" aria-hidden="true"></div>
+  <div class="hdr-main">
+    <div class="hdr-main__inner container">
+      <button class="icon-btn hdr-burger" type="button" data-open-menu aria-controls="menu-drawer" aria-haspopup="dialog">
+        <svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-list"></use></svg><span class="sr-only">Meniu</span>
+      </button>
+      <a class="logo" href="index.html"><img class="logo__img" src="assets/img/brand/logo.png" alt="Brandstore, pagrindinis puslapis" width="640" height="150"></a>
+      <form class="hdr-search search-field" role="search" action="parduotuve.html" method="get" data-search-form>
+        <label class="sr-only" for="hdr-q">Paieška</label>
+        <svg class="i search-field__icon" aria-hidden="true" focusable="false"><use href="#i-magnifying-glass"></use></svg>
+        <input class="search-field__input" id="hdr-q" name="q" type="search" placeholder="Ieškokite prekės, kategorijos ar prekės ženklo" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="search-panel" aria-autocomplete="list" enterkeyhint="search" data-search-input>
+        <kbd class="search-field__kbd" aria-hidden="true">/</kbd>
+      </form>
+      <div class="hdr-actions">
+        <button class="icon-btn hdr-only-mobile" type="button" data-open-search aria-controls="search-panel">
+          <svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-magnifying-glass"></use></svg><span class="sr-only">Paieška</span>
+        </button>
+        <a class="icon-btn hdr-only-desktop" href="#" data-demo>
+          <svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-user"></use></svg><span class="sr-only">Paskyra</span>
+        </a>
+        <button class="icon-btn hdr-only-desktop" type="button" data-open-wishlist aria-controls="wishlist-drawer" aria-haspopup="dialog">
+          <svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-heart"></use></svg><span class="sr-only">Norų sąrašas</span>
+          <span class="count-badge" data-wishlist-count hidden>0</span>
+        </button>
+        <button class="icon-btn" type="button" data-open-cart aria-controls="cart-drawer" aria-haspopup="dialog">
+          <svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-handbag"></use></svg><span class="sr-only">Krepšelis</span>
+          <span class="count-badge" data-cart-count hidden>0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="hdr-sub">
+    <nav class="hdr-nav container" aria-label="Pagrindinė navigacija">
+      {{ nav_html }}
+    </nav>
+    <div class="hdr-msearch container">
+      <button class="hdr-msearch__field" type="button" data-open-search aria-controls="search-panel">
+        <svg class="i" aria-hidden="true" focusable="false"><use href="#i-magnifying-glass"></use></svg>
+        <span>Ieškokite prekės ar prekės ženklo</span>
+      </button>
+    </div>
+  </div>
+  <div class="hdr-scrim" data-header-scrim aria-hidden="true"></div>
+  <div class="search-panel" id="search-panel" data-search-panel data-lenis-prevent>
+    <div class="search-panel__bar">
+      <form class="search-field search-field--panel" role="search" action="parduotuve.html" method="get" data-search-form>
+        <label class="sr-only" for="search-q-m">Paieška</label>
+        <svg class="i search-field__icon" aria-hidden="true" focusable="false"><use href="#i-magnifying-glass"></use></svg>
+        <input class="search-field__input" id="search-q-m" name="q" type="search" placeholder="Ieškokite prekės ar prekės ženklo" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="search-panel" aria-autocomplete="list" enterkeyhint="search" data-search-input>
+      </form>
+      <button class="search-panel__cancel" type="button" data-search-close>Atšaukti</button>
+    </div>
+    <div class="search-panel__inner container" data-search-results></div>
+    <p class="sr-only" role="status" aria-live="polite" data-search-status></p>
+  </div>
+</header>

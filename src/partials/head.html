@@ -1,0 +1,29 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+<meta name="theme-color" content="#F4F4F2">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Brandstore.lt">
+<meta property="og:locale" content="lt_LT">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ description }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23121315'/%3E%3Ctext x='32' y='46' font-family='Didot,Georgia,serif' font-size='42' text-anchor='middle' fill='%23F2F2EF'%3EB%3C/text%3E%3C/svg%3E">
+<script>
+/* Motion gate: hidden initial states only apply under html.motion-ok. core.js removes it if Motion fails to load;
+   the timeout is a failsafe so content never stays hidden when scripts break. */
+(function (h) {
+  h.classList.remove('no-js'); h.classList.add('js');
+  try { if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) h.classList.add('motion-ok'); } catch (e) {}
+  setTimeout(function () { if (!(window.BS && window.BS.ready)) h.classList.remove('motion-ok'); }, 4000);
+})(document.documentElement);
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Geist:wght@300..700&amp;display=swap">
+{{ preload }}
+<link rel="stylesheet" href="assets/css/base.css?v={{ v_base }}">
+{{ page_css }}

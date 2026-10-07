@@ -1,0 +1,49 @@
+<dialog class="drawer drawer--right" id="cart-drawer" aria-labelledby="cart-drawer-title" data-lenis-prevent>
+  <div class="drawer__head">
+    <h2 class="drawer__title" id="cart-drawer-title" tabindex="-1" autofocus>Krepšelis <span class="drawer__count" data-cart-count-text></span></h2>
+    <button class="icon-btn" type="button" data-dialog-close><svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-x"></use></svg><span class="sr-only">Uždaryti krepšelį</span></button>
+  </div>
+  <div class="ship-progress" data-cart-shipping hidden></div>
+  <div class="drawer__body" data-cart-body></div>
+  <div class="drawer__foot" data-cart-foot hidden></div>
+</dialog>
+
+<dialog class="drawer drawer--right" id="wishlist-drawer" aria-labelledby="wishlist-drawer-title" data-lenis-prevent>
+  <div class="drawer__head">
+    <h2 class="drawer__title" id="wishlist-drawer-title" tabindex="-1" autofocus>Norų sąrašas <span class="drawer__count" data-wishlist-count-text></span></h2>
+    <button class="icon-btn" type="button" data-dialog-close><svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-x"></use></svg><span class="sr-only">Uždaryti norų sąrašą</span></button>
+  </div>
+  <div class="drawer__body" data-wishlist-body></div>
+</dialog>
+
+<dialog class="drawer drawer--left" id="menu-drawer" aria-label="Meniu" data-lenis-prevent>
+  <div class="drawer__head">
+    <a class="logo logo--drawer" href="index.html"><img class="logo__img" src="assets/img/brand/logo.png" alt="Brandstore, pagrindinis puslapis" width="640" height="150" loading="lazy"></a>
+    <button class="icon-btn" type="button" data-dialog-close><svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-x"></use></svg><span class="sr-only">Uždaryti meniu</span></button>
+  </div>
+  <div class="drawer__body mdrawer">
+    {{ menu_drawer_html }}
+    <div class="mdrawer__contacts">
+      <p class="label">Kontaktai</p>
+      <a href="tel:{{ phone }}"><svg class="i" aria-hidden="true" focusable="false"><use href="#i-phone"></use></svg>{{ phone_display }}</a>
+      <a href="mailto:{{ email }}"><svg class="i" aria-hidden="true" focusable="false"><use href="#i-envelope-simple"></use></svg>{{ email }}</a>
+      <p><svg class="i" aria-hidden="true" focusable="false"><use href="#i-map-pin"></use></svg>{{ address }}</p>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal modal--qv" id="quick-view" aria-labelledby="qv-title" data-lenis-prevent>
+  <button class="icon-btn icon-btn--solid modal__close" type="button" data-dialog-close><svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-x"></use></svg><span class="sr-only">Uždaryti peržiūrą</span></button>
+  <div class="qv" data-qv-body><h2 class="sr-only" id="qv-title">Greita peržiūra</h2></div>
+</dialog>
+
+<dialog class="modal modal--sheet" id="size-guide" aria-labelledby="size-guide-title" data-lenis-prevent>
+  <div class="modal__head">
+    <h2 class="modal__title" id="size-guide-title" tabindex="-1" autofocus>Dydžių lentelė</h2>
+    <button class="icon-btn" type="button" data-dialog-close><svg class="i i--lg" aria-hidden="true" focusable="false"><use href="#i-x"></use></svg><span class="sr-only">Uždaryti dydžių lentelę</span></button>
+  </div>
+  <div class="modal__body" data-size-guide-body></div>
+</dialog>
+
+<div class="toast-region" id="toast-region" popover="manual"></div>
+<p class="sr-only" role="status" aria-live="polite" id="sr-status"></p>

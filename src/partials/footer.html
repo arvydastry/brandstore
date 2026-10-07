@@ -1,0 +1,52 @@
+<footer class="site-footer" id="kontaktai">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="logo logo--footer" href="index.html"><img class="logo__img" src="assets/img/brand/logo.png" alt="Brandstore, pagrindinis puslapis" width="640" height="150" loading="lazy"></a>
+        <p class="footer__tagline">Originalūs drabužiai, avalynė ir aksesuarai iš pasaulio prekių ženklų.</p>
+        <ul class="footer__social" role="list">
+          <li><a class="icon-btn icon-btn--outline" href="#" data-demo><svg class="i" aria-hidden="true" focusable="false"><use href="#i-facebook-logo"></use></svg><span class="sr-only">Brandstore Facebook</span></a></li>
+          <li><a class="icon-btn icon-btn--outline" href="#" data-demo><svg class="i" aria-hidden="true" focusable="false"><use href="#i-instagram-logo"></use></svg><span class="sr-only">Brandstore Instagram</span></a></li>
+        </ul>
+      </div>
+      <nav class="footer__col" aria-labelledby="footer-pirkejams">
+        <h2 class="footer__title" id="footer-pirkejams">Pirkėjams</h2>
+        <ul role="list">
+          <li><a href="#" data-demo>Pristatymas</a></li>
+          <li><a href="#" data-demo>Apmokėjimas</a></li>
+          <li><a href="#" data-demo>Grąžinimo politika</a></li>
+          <li><a href="#" data-demo>Pirkimo taisyklės</a></li>
+          <li><a href="#" data-demo>DUK</a></li>
+        </ul>
+      </nav>
+      <nav class="footer__col" aria-labelledby="footer-kategorijos">
+        <h2 class="footer__title" id="footer-kategorijos">Kategorijos</h2>
+        <ul role="list">
+          <li><a href="parduotuve.html?lytis=moterims">Moterims</a></li>
+          <li><a href="parduotuve.html?lytis=vyrams">Vyrams</a></li>
+          <li><a href="parduotuve.html?lytis=vaikams">Vaikams</a></li>
+          <li><a href="#" data-open-brands>Prekių ženklai</a></li>
+          <li><a class="footer__sale" href="parduotuve.html">Išpardavimas</a></li>
+        </ul>
+      </nav>
+      <div class="footer__col">
+        <h2 class="footer__title">Kontaktai</h2>
+        <ul class="footer__contacts" role="list">
+          <li><a href="tel:{{ phone }}"><svg class="i" aria-hidden="true" focusable="false"><use href="#i-phone"></use></svg>{{ phone_display }}</a></li>
+          <li><a href="mailto:{{ email }}"><svg class="i" aria-hidden="true" focusable="false"><use href="#i-envelope-simple"></use></svg>{{ email }}</a></li>
+          <li><span><svg class="i" aria-hidden="true" focusable="false"><use href="#i-map-pin"></use></svg>{{ address }}</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <ul class="pay-marks" role="list" aria-label="Mokėjimo būdai">
+<!-- @include payment-marks -->
+      </ul>
+      <div class="footer__legal">
+        <p>©&nbsp;{{ year }} Brandstore.lt. Visos teisės saugomos.</p>
+        <p>Individualios veiklos pažymėjimo nr.&nbsp;1393761</p>
+        <a href="#" data-demo>Privatumo politika</a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -561,6 +561,9 @@ def main() -> None:
         "v_base": file_version("assets/css/base.css"),
         "v_core": file_version("assets/js/core.js"),
         "v_catalog": file_version("assets/data/catalog.js"),
+        # images keep their URL when replaced, so the logos carry a content hash too (browsers cache them for 10 min on GitHub Pages)
+        "v_logo_dark": file_version("assets/img/brand/logo-dark.png"),
+        "v_logo_light": file_version("assets/img/brand/logo-light.png"),
         "menu_drawer_html": render_menu_drawer(cat),
         "phone": esc(cat["meta"]["phone"]),
         "phone_display": esc(cat["meta"]["phoneDisplay"]).replace(" ", NBSP),
